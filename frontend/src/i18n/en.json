@@ -36,7 +36,8 @@
     "toggleSidebar": "Toggle sidebar",
     "update": "Update",
     "upload": "Upload",
-    "openFile": "Open file"
+    "openFile": "Open file",
+    "openIINA": "Open in IINA"
   },
   "download": {
     "downloadFile": "Download File",

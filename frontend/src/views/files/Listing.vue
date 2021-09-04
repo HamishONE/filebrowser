@@ -58,6 +58,12 @@
           @action="switchView"
         />
         <action
+          v-if="headerButtons.open_iina"
+          icon="play_circle_filled"
+          :label="$t('buttons.openIINA')"
+          @action="open_iina"
+        />
+        <action
           v-if="headerButtons.download"
           icon="file_download"
           :label="$t('buttons.download')"
@@ -366,6 +372,10 @@ export default {
         share: this.selectedCount === 1 && this.user.perm.share,
         move: this.selectedCount > 0 && this.user.perm.rename,
         copy: this.selectedCount > 0 && this.user.perm.create,
+        open_iina:
+          this.selectedCount === 1 &&
+          this.user.perm.download &&
+          api.is_video(this.req.items[this.selected[0]].url),
       };
     },
     isMobile() {
@@ -779,6 +789,9 @@ export default {
       // Fill but not fit the window
       this.fillWindow();
     }, 100),
+    open_iina() {
+      api.open_iina(this.req.items[this.selected[0]].url);
+    },
     download() {
       if (this.selectedCount === 1 && !this.req.items[this.selected[0]].isDir) {
         api.download(null, this.req.items[this.selected[0]].url);

@@ -57,6 +57,26 @@ export async function put(url, content = "") {
   return resourceAction(url, "PUT", content);
 }
 
+export function is_video(single_file) {
+  const types = [".mkv", ".m4v", ".mp4", ".wmv"];
+  for (const type of types) {
+    if (single_file.endsWith(type)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function open_iina(single_file) {
+  let url = window.location.origin + baseURL + "/api/raw";
+  url += removePrefix(single_file) + "?";
+  if (store.state.jwt) {
+    url += `auth=${store.state.jwt}&`;
+  }
+  let iina_url = `iina://open?url=${encodeURIComponent(url)}`;
+  window.open(iina_url);
+}
+
 export function download(format, ...files) {
   let url = `${baseURL}/api/raw`;
 
