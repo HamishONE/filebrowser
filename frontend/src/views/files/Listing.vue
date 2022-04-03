@@ -53,7 +53,7 @@
           @action="$store.commit('toggleShell')"
         />
         <action
-          :icon="user.viewMode === 'mosaic' ? 'view_list' : 'view_module'"
+          :icon="viewIcon"
           :label="$t('buttons.switchView')"
           @action="switchView"
         />
@@ -152,7 +152,12 @@
           multiple
         />
       </div>
-      <div v-else id="listing" ref="listing" :class="user.viewMode">
+      <div
+        v-else
+        id="listing"
+        ref="listing"
+        :class="user.viewMode + ' file-icons'"
+      >
         <div>
           <div class="item header">
             <div></div>
@@ -289,6 +294,7 @@ export default {
   data: function () {
     return {
       showLimit: 50,
+      columnWidth: 280,
       dragCounter: 0,
       width: window.innerWidth,
       itemWeight: 0,
@@ -361,6 +367,14 @@ export default {
       }
 
       return "arrow_upward";
+    },
+    viewIcon() {
+      const icons = {
+        list: "view_module",
+        mosaic: "grid_view",
+        "mosaic gallery": "view_list",
+      };
+      return icons[this.user.viewMode];
     },
     headerButtons() {
       return {
@@ -601,7 +615,7 @@ export default {
     colunmsResize() {
       // Update the columns size based on the window width.
       let columns = Math.floor(
-        document.querySelector("main").offsetWidth / 300
+        document.querySelector("main").offsetWidth / this.columnWidth
       );
       let items = css(["#listing.mosaic .item", ".mosaic#listing .item"]);
       if (columns === 0) columns = 1;
@@ -820,9 +834,15 @@ export default {
     switchView: async function () {
       this.$store.commit("closeHovers");
 
+      const modes = {
+        list: "mosaic",
+        mosaic: "mosaic gallery",
+        "mosaic gallery": "list",
+      };
+
       const data = {
         id: this.user.id,
-        viewMode: this.user.viewMode === "mosaic" ? "list" : "mosaic",
+        viewMode: modes[this.user.viewMode] || "list",
       };
 
       users.update(data, ["viewMode"]).catch(this.$showError);
